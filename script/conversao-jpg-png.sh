@@ -15,7 +15,7 @@ percorre_arquivos_converte(){
             if [[ $arquivo =~ \.jpg$ ]];then
                 local caminho_relativo_imagem_diretorio_original=$(realpath --relative-to=$DIRETORIO_ORIGINAL \
                     $caminho_arquivo)
-                converte_imagem $arquivo $caminho_relativo_imagem_diretorio_original
+                converte_imagem $caminho_arquivo $caminho_relativo_imagem_diretorio_original
             fi
         fi
     done
@@ -30,12 +30,8 @@ remove_extensao(){
 
 
 converte_imagem(){
-    local nome_imagem=$(remove_extensao $1)
     local caminho_relativo_imagem=$(remove_extensao $2)
     convert $1 $DIRETORIO_PNG/$caminho_relativo_imagem.png
-    echo pwd= $(pwd)
-    echo nome_imagem= $nome_imagem
-    echo caminho_relativo_imagem= $caminho_relativo_imagem
     }
 
 
@@ -43,10 +39,11 @@ converte_imagem(){
 DIRETORIO_ORIGINAL=$1
 
 cd $DIRETORIO_ORIGINAL
-find . -type d > dirs.txt
-# Programa não está convertendo todas as imagens. Provável que só as imagens cujas localizações se encontram ao lado do
-# diretório em que entra no modo recursivo. Também fazer teste para imagens e diretórios com mesmo nome, mas em lugares
-# diferentes (obviamente)
+find . -type d > dirs.txt  # imprime os caminhos relativos dos diretórios e subdiretórios ao diretório original no
+# arquivo dirs.txt
+
+# Realizar correção para teste para imagens e diretórios com mesmo nome, mas em lugares diferentes (obviamente)
+# provável problema está na saída do find -name <nome arquivo> gera duas saídas.
 cd ..
 if [ ! -d png ]
     then
@@ -70,6 +67,7 @@ percorre_arquivos_converte $DIRETORIO_ORIGINAL 2>> $DIRETORIO_LOGS/log-conversao
 
 if [ $? -eq 0 ];then
     echo "Conversão realizada com sucesso" >> $DIRETORIO_LOGS/log-conversao-$data_conversao.log
+    echo "Conversão realizada com sucesso"
 else
     echo "Houve uma falha no processo de conversão. Por favor, verifique o arquivo de log em $DIRETORIO_LOGS/\
     log-conversao-$data_conversao.log"
