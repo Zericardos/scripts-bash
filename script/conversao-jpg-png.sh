@@ -33,7 +33,10 @@ converte_imagem(){
     local nome_imagem=$(remove_extensao $1)
     local caminho_relativo_imagem=$(remove_extensao $2)
     convert $1 $DIRETORIO_PNG/$caminho_relativo_imagem.png
-}
+    echo pwd= $(pwd)
+    echo nome_imagem= $nome_imagem
+    echo caminho_relativo_imagem= $caminho_relativo_imagem
+    }
 
 
 # Verificar a possibilidade de colocar condição de caminho absoluto ou relativo na aplicação
@@ -42,7 +45,8 @@ DIRETORIO_ORIGINAL=$1
 cd $DIRETORIO_ORIGINAL
 find . -type d > dirs.txt
 # Programa não está convertendo todas as imagens. Provável que só as imagens cujas localizações se encontram ao lado do
-# diretório em que entra
+# diretório em que entra no modo recursivo. Também fazer teste para imagens e diretórios com mesmo nome, mas em lugares
+# diferentes (obviamente)
 cd ..
 if [ ! -d png ]
     then
