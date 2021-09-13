@@ -56,18 +56,18 @@ DIRETORIO_PNG=$(realpath png)
 verifica_cria_diretorio logs
 DIRETORIO_LOGS=$(realpath logs)
 
-echo $data_conversao,$horario_conversao >> $DIRETORIO_LOGS/log-conversao-$data_conversao.log
+echo $data_conversao,$horario_conversao >> $DIRETORIO_LOGS/conversao-$data_conversao.log
 
 cd $DIRETORIO_PNG
 xargs mkdir -p < $DIRETORIO_ORIGINAL/dirs.txt
 rm $DIRETORIO_ORIGINAL/dirs.txt
 
-percorre_arquivos_converte $DIRETORIO_ORIGINAL 2>> $DIRETORIO_LOGS/log-conversao-$data_conversao.log
+percorre_arquivos_converte $DIRETORIO_ORIGINAL 2>> $DIRETORIO_LOGS/conversao-$data_conversao.log
 
 if [ $? -eq 0 ];then
-    echo "Conversão realizada com sucesso" >> $DIRETORIO_LOGS/log-conversao-$data_conversao.log
+    echo "Conversão realizada com sucesso" >> $DIRETORIO_LOGS/conversao-$data_conversao.log
     echo "Conversão realizada com sucesso"
 else
     echo "Houve uma falha no processo de conversão. Por favor, verifique o arquivo de log em $DIRETORIO_LOGS/\
-    log-conversao-$data_conversao.log"
+    conversao-$data_conversao.log"
 fi
