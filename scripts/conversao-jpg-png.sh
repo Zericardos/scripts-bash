@@ -8,16 +8,18 @@ horario_conversao=$(date '+%2H:%2M:%S')
 percorre_arquivos_converte(){
     cd $1
     for arquivo in *;do
-        local caminho_arquivo=$(find $DIRETORIO_ORIGINAL -name $arquivo)
-        if [ -d $caminho_arquivo ];then
-            percorre_arquivos_converte $caminho_arquivo
-        else
-            if [[ $arquivo =~ \.jpg$ ]];then
-                local caminho_relativo_imagem_diretorio_original=$(realpath --relative-to=$DIRETORIO_ORIGINAL \
-                    $caminho_arquivo)
-                converte_imagem $caminho_arquivo $caminho_relativo_imagem_diretorio_original
+        local caminho_arquivos=$(find $DIRETORIO_ORIGINAL -name $arquivo)
+        for caminho_arquivo in $caminho_arquivos;do
+            if [ -d $caminho_arquivo ];then
+                percorre_arquivos_converte $caminho_arquivo
+            else
+                if [[ $arquivo =~ \.jpg$ ]];then
+                    local caminho_relativo_imagem_diretorio_original=$(realpath --relative-to=$DIRETORIO_ORIGINAL \
+                        $caminho_arquivo)
+                    converte_imagem $caminho_arquivo $caminho_relativo_imagem_diretorio_original
+                fi
             fi
-        fi
+        done
     done
 
 }
@@ -34,6 +36,11 @@ converte_imagem(){
     convert $1 $DIRETORIO_PNG/$caminho_relativo_imagem.png
     }
 
+verifica_cria_diretorio(){
+    if [ ! -d $1 ]; then
+        mkdir $1
+    fi
+}
 
 # Verificar a possibilidade de colocar condição de caminho absoluto ou relativo na aplicação
 DIRETORIO_ORIGINAL=$1
@@ -42,19 +49,11 @@ cd $DIRETORIO_ORIGINAL
 find . -type d > dirs.txt  # imprime os caminhos relativos dos diretórios e subdiretórios ao diretório original no
 # arquivo dirs.txt
 
-# Realizar correção para teste para imagens e diretórios com mesmo nome, mas em lugares diferentes (obviamente)
-# provável problema está na saída do find -name <nome arquivo> gera duas saídas.
 cd ..
-if [ ! -d png ]
-    then
-        mkdir png
-fi
+verifica_cria_diretorio png
 DIRETORIO_PNG=$(realpath png)
 
-if [ ! -d logs ]
-    then
-        mkdir logs
-fi
+verifica_cria_diretorio logs
 DIRETORIO_LOGS=$(realpath logs)
 
 echo $data_conversao,$horario_conversao >> $DIRETORIO_LOGS/log-conversao-$data_conversao.log
